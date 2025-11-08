@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vegetable Price Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #8BC34A;
+            --accent-color: #FFC107;
+            --danger-color: #F44336;
+            --dark-color: #2E7D32;
+            --light-color: #F1F8E9;
+            --text-color: #333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .date-display {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        main {
+            padding: 2rem 0;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.total { background-color: rgba(76, 175, 80, 0.2); color: var(--primary-color); }
+        .stat-icon.average { background-color: rgba(255, 193, 7, 0.2); color: var(--accent-color); }
+        .stat-icon.highest { background-color: rgba(244, 67, 54, 0.2); color: var(--danger-color); }
+        .stat-icon.lowest { background-color: rgba(33, 150, 243, 0.2); color: #2196F3; }
+
+        .stat-content h3 { font-size: 0.9rem; color: #666; margin-bottom: 0.3rem; }
+        .stat-value { font-size: 1.5rem; font-weight: bold; }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: var(--dark-color); }
+        .btn-secondary { background-color: white; color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .btn-secondary:hover { background-color: var(--light-color); }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .vegetable-list {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .vegetable-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .vegetable-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .vegetable-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .vegetable-price .price { font-weight: bold; font-size: 1.1rem; color: var(--dark-color); }
+        .price-up { color: var(--danger-color); }
+        .price-down { color: var(--primary-color); }
+        .price-stable { color: #999; }
+
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            height: 400px;
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-carrot"></i>
+                    <span>Vegetable Price Tracker</span>
+                </div>
+                <div class="date-display" id="currentDate"></div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="dashboard">
+                <div class="stat-card">
+                    <div class="stat-icon total"><i class="fas fa-shopping-basket"></i></div>
+                    <div class="stat-content"><h3>Total Vegetables</h3><div class="stat-value" id="totalVegetables">0</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon average"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-content"><h3>Average Price</h3><div class="stat-value" id="averagePrice">₹0.00</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon highest"><i class="fas fa-arrow-up"></i></div>
+                    <div class="stat-content"><h3>Highest Price</h3><div class="stat-value" id="highestPrice">₹0.00</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon lowest"><i class="fas fa-arrow-down"></i></div>
+                    <div class="stat-content"><h3>Lowest Price</h3><div class="stat-value" id="lowestPrice">₹0.00</div></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search vegetables...">
+                </div>
+                <button class="btn btn-primary" id="addVegetableBtn"><i class="fas fa-plus"></i> Add Vegetable</button>
+                <button class="btn btn-secondary" id="exportBtn"><i class="fas fa-download"></i> Export Data</button>
+            </div>
+
+            <div class="content-grid">
+                <div class="vegetable-list">
+                    <h2 class="section-title"><i class="fas fa-list"></i> Vegetable Prices</h2>
+                    <div id="vegetableListContainer"></div>
+                </div>
+                <div class="chart-container">
+                    <h2 class="section-title"><i class="fas fa-chart-bar"></i> Price Trends</h2>
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Vegetable Price Tracker. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currency = "₹";
+            const currentDateElement = document.getElementById('currentDate');
+            const today = new Date();
+            currentDateElement.textContent = today.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+            let vegetables = [
+                { id: 1, name: 'Tomatoes', price: 40, unit: 'kg', icon: '🍅', priceHistory: [38, 39, 40, 42] },
+                { id: 2, name: 'Carrots', price: 35, unit: 'kg', icon: '🥕', priceHistory: [33, 34, 35, 35] },
+                { id: 3, name: 'Broccoli', price: 80, unit: 'kg', icon: '🥦', priceHistory: [78, 79, 81, 80] },
+                { id: 4, name: 'Lettuce', price: 25, unit: 'piece', icon: '🥬', priceHistory: [24, 25, 26, 25] },
+                { id: 5, name: 'Onions', price: 30, unit: 'kg', icon: '🧅', priceHistory: [28, 29, 30, 31] }
+            ];
+
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: vegetables.map(v => ({
+                        label: v.name,
+                        data: v.priceHistory,
+                        borderWidth: 2,
+                        fill: false,
+                        borderColor: `hsl(${Math.random() * 360}, 70%, 50%)`
+                    }))
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            function renderVegetables() {
+                const list = document.getElementById('vegetableListContainer');
+                list.innerHTML = '';
+                vegetables.forEach(v => {
+                    const div = document.createElement('div');
+                    div.className = 'vegetable-item';
+                    div.innerHTML = `
+                        <div class="vegetable-info">
+                            <div class="vegetable-icon">${v.icon}</div>
+                            <div><h4>${v.name}</h4><span>Per ${v.unit}</span></div>
+                        </div>
+                        <div class="vegetable-price"><div class="price">${currency}${v.price.toFixed(2)}</div></div>`;
+                    list.appendChild(div);
+                });
+                updateStats();
+            }
+
+            function updateStats() {
+                const prices = vegetables.map(v => v.price);
+                document.getElementById('totalVegetables').textContent = vegetables.length;
+                document.getElementById('averagePrice').textContent = `${currency}${(prices.reduce((a,b)=>a+b,0)/prices.length).toFixed(2)}`;
+                document.getElementById('highestPrice').textContent = `${currency}${Math.max(...prices).toFixed(2)}`;
+                document.getElementById('lowestPrice').textContent = `${currency}${Math.min(...prices).toFixed(2)}`;
+            }
+
+            renderVegetables();
+        });
+    </script>
+</body>
+</html>
